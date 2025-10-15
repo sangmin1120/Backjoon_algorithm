@@ -1,56 +1,58 @@
 /**
- * 최단 경로: 가중치 10 이하 자연수, 우선 순위 큐?
+ * 최단 경로: 가중치 10 이하 자연수, 우선 순위 큐
  * Dijkstra (G4)
  */
 #include <bits/stdc++.h>
 using namespace std;
-#define INF_MAX 20001
 
 // init
-int v,e; // vertex의 수, edge의 수
-int start;
-vector<pair<int,int>> graph[20000]; // v -> u 의 w 가중치
-vector<int> visited(20001,INT_MAX);
+int count_v, count_e; // 정점 수, 엣지 수
+int start_v; // 시작 정점
+vector<vector<pair<int,int>>> graph(20001); // v1 -> v2, w
+int dist[20001];
 
 void solution() {
 
-    priority_queue<pair<int,int>> pq; // weight, v
-    visited[start] = 0;
-    pq.push({0,start});
+    priority_queue<pair<int,int>> pq; // -(w),v
+    pq.push({0,start_v});
+    dist[start_v]=0;
 
     while (!pq.empty()) {
-        int cur_dist = - pq.top().first;
-        int cur_node = pq.top().second;
-        pq.pop();
+        auto cur = pq.top(); pq.pop();
+        int w = -cur.first;
+        int v = cur.second;
 
-        for (int i=0;i<graph[cur_node].size();i++) {
-            int next_node = graph[cur_node][i].first;
-            int next_dist = cur_dist + graph[cur_node][i].second;
+        for (auto target : graph[v]) {
+            int target_v = target.first;
+            int target_w = target.second;
 
-            if (next_dist < visited[next_node]){
-                visited[next_node] = next_dist;
-                pq.push({-next_dist,next_node});
+            if (dist[target_v] > w+target_w) {
+                dist[target_v] = w+target_w;
+                pq.push({-dist[target_v], target_v});
             }
         }
     }
 
-    // printf
-    for (int i=1;i<=v;i++) {
-        if (visited[i]==INT_MAX)
+    // print
+    for (int i=1;i<=count_v;i++) {
+        if (dist[i] == INT_MAX)
             cout << "INF" << '\n';
         else
-            cout << visited[i] << '\n';
+            cout << dist[i] << '\n';
     }
 }
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
 
-    // init
-    cin >> v >> e;
-    cin >> start;
-    for (int i=0;i<e;i++) {
-        int a,b,w;  cin >> a >> b >> w;
+    // input
+    cin >> count_v >> count_e;
+    cin >> start_v;
+
+    fill(dist,dist+count_v+1,INT_MAX);
+    for (int i=0;i<count_e;i++) {
+        int a,b,w;
+        cin >> a >> b >> w;
         graph[a].push_back({b,w});
     }
 
