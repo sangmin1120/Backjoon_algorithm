@@ -1,6 +1,6 @@
 /**
  * 택배 배송
- * BFS (G5)
+ * Dikjstra (G5)
  */
 #include <bits/stdc++.h>
 using namespace std;
@@ -11,21 +11,24 @@ int dist[50001];
 
 void solution() {
 
-    queue<int> q;
-    int s = 1;
-    q.push(s);
-    dist[s] = 0;
+    priority_queue<pair<int,int>> pq;
+    pq.push({0,1}); // weight, vertex
+    dist[1] = 0;
 
-    while (!q.empty()) {
-        int cur = q.front(); q.pop();
+    while (!pq.empty()) {
+        auto c = pq.top(); pq.pop();
+        int cur = c.second;
+        int val = -c.first;
+
+        if (dist[cur] < val)    continue;
 
         for (auto g : graph[cur]) {
             int next = g.first;
             int w = g.second + dist[cur];
 
-            if (w < dist[next]) {
+            if (dist[next] > w) {
                 dist[next] = w;
-                q.push(next);
+                pq.push({-w,next});
             }
         }
     }
